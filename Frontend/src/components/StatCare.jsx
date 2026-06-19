@@ -6,21 +6,48 @@ export default function StatCard({
   icon,
 }) {
   return (
-    <Card>
+    <Card
+      className="
+        relative
+        overflow-hidden
+        border-0
+        shadow-md
+        hover:shadow-xl
+        hover:-translate-y-1
+        transition-all
+        duration-300
+        rounded-2xl
+      "
+    >
+      {/* Top Accent Line */}
+      <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-blue-500 to-cyan-500" />
+
       <CardContent className="p-6">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
 
           <div>
-            <p className="text-gray-500 text-sm">
+            <p className="text-sm font-medium text-gray-500">
               {title}
             </p>
 
-            <h2 className="text-3xl font-bold mt-2">
+            <h2 className="text-4xl font-bold mt-2 text-gray-800">
               {value}
             </h2>
           </div>
 
-          <div>
+          <div
+            className="
+              h-14
+              w-14
+              rounded-2xl
+              bg-blue-100
+              text-blue-600
+              flex
+              items-center
+              justify-center
+              shadow-sm
+            "
+          >
             {icon}
           </div>
 
