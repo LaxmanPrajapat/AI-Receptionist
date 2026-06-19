@@ -1,19 +1,8 @@
-from __future__ import annotations
-from sqlalchemy import text
-from Backend.database import engine
+from database import appointments_collection
 
+appointments = list(
+    appointments_collection.find({})
+)
 
-def run_sql(query: str):
-    """Run a raw SQL query on the same DB used by `database.py` .
-    
-    Example: 
-          rows = runs_sql("SELECT * FROM meetings)
-          print(rows)
-    """
-    with engine.begin() as conn:
-        result =conn.execute(text(query))
-        return result.fetchall() if result.returns_rows else result.rowcount
-    
-query =    """SELECT * FROM meetings"""
-
-print(run_sql(query)) 
+for appointment in appointments:
+    print(appointment)
