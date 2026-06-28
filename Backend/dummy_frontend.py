@@ -8,6 +8,7 @@ base_url = st.text_input("Backend URL", "http://localhost:4444").rstrip("/")
 
 patient_name = st.text_input("Patient name")
 reason = st.text_input("Reason")
+mobile= st.text_input("mobile")
 start_date = st.date_input("Date", value=dt.date.today() + dt.timedelta(days=1))
 start_time = st.time_input("Time", value=dt.time(9, 0))
 
@@ -16,6 +17,7 @@ if st.button("Schedule"):
     payload = {
         "patient_name": patient_name.strip(),
         "reason": reason.strip() or None,
+        "mobile":mobile,
         "start_time": start_dt.isoformat(),
     }
     try:

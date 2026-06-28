@@ -1,7 +1,9 @@
 
 import DashboardLayout from "../layouts/DashboardLayout";
 import StatCard from "../components/StatCare";
-
+import { Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import axios from "axios";
 import {
   Users,
   Calendar,
@@ -39,6 +41,35 @@ const patientData = [
 const COLORS = ["#2563eb", "#06b6d4"];
 
 export default function Dashboard() {
+  const [dashboard, setDashboard] = useState({
+  total_patients: 0,
+  total_appointments: 0,
+  total_cancelled: 0,
+  total_doctors: 0,
+  appointment_trend: [],
+  patient_analytics: [],
+  today_appointments: [],
+  recent_activity: [],
+});
+
+const [loading, setLoading] = useState(true);
+const fetchDashboard = async () => {
+  try {
+    const res = await axios.get(
+      "http://127.0.0.1:4444/dashboard"
+    );
+
+    setDashboard(res.data);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchDashboard();
+}, []);
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -56,18 +87,21 @@ export default function Dashboard() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-
+       <Link to="/patients" style={{ textDecoration: 'none', color: 'inherit' }}>
           <StatCard
             title="Total Patients"
-            value="1,240"
+           value={loading ? "..." : dashboard.total_patients}
             icon={<Users />}
           />
-
-          <StatCard
-            title="Appointments"
-            value="245"
-            icon={<Calendar />}
-          />
+</Link>
+          
+           <Link to="/appointments" style={{ textDecoration: 'none', color: 'inherit' }}>
+      <StatCard 
+        title="Appointments"
+       value={loading ? "..." : dashboard.total_appointments}
+        icon={<Calendar />}
+      />
+    </Link>
 
           <StatCard
             title="Doctors"
@@ -77,7 +111,7 @@ export default function Dashboard() {
 
           <StatCard
             title="Cancelled"
-            value="12"
+            value={loading ? "..." : dashboard.total_cancelled}
             icon={<XCircle />}
           />
 
@@ -93,7 +127,8 @@ export default function Dashboard() {
             </h2>
 
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={appointmentData}>
+              data={dashboard.appointment_trend}
+              <LineChart data={dashboard.appointment_trend}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="day" />
                 <YAxis />
@@ -118,7 +153,7 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={patientData}
+                  data={dashboard.patient_analytics}
                   dataKey="value"
                   outerRadius={110}
                   label
@@ -141,42 +176,23 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
           {/* Today's Appointments */}
-          <div className="bg-white rounded-2xl shadow p-5">
-            <h2 className="font-semibold mb-4">
-              Today's Appointments
-            </h2>
-
-            <div className="space-y-3">
-              <div className="flex justify-between border-b pb-2">
-                <span>Rahul Sharma</span>
-                <span>10:00 AM</span>
-              </div>
-
-              <div className="flex justify-between border-b pb-2">
-                <span>Priya Singh</span>
-                <span>11:30 AM</span>
-              </div>
-
-              <div className="flex justify-between border-b pb-2">
-                <span>Amit Kumar</span>
-                <span>2:00 PM</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Activity */}
-          <div className="bg-white rounded-2xl shadow p-5">
-            <h2 className="font-semibold mb-4">
-              Recent Activity
-            </h2>
-
-            <div className="space-y-4 text-sm">
-              <p>✅ Appointment booked by Rahul</p>
-              <p>🩺 Doctor available: Dr. Sharma</p>
-              <p>❌ Appointment cancelled</p>
-              <p>📅 New appointment scheduled</p>
-            </div>
-          </div>
+          <div className="space-y-3">
+  {dashboard.today_appointments.map((item, index) => (
+    <div
+      key={index}
+      className="flex justify-between border-b pb-2"
+    >
+      <span>{item.patient_name}</span>
+      <span>{item.time}</span>
+    </div>
+  ))}
+</div>
+<div className="space-y-4 text-sm">
+  {dashboard.recent_activity.map((activity, index) => (
+    <p key={index}>• {activity}</p>
+  ))}
+</div>
+        
 
         </div>
 
