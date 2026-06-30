@@ -1,15 +1,20 @@
 from pymongo import MongoClient
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
-# Local MongoDB Compass connection
-MONGO_URL = "mongodb://localhost:27017"
-client = MongoClient(MONGO_URL)
+MONGODB_URI = os.getenv("MONGODB_URI")
 
-# Database Name
+if not MONGODB_URI:
+    raise ValueError("MONGODB_URI not found in .env")
+
+client = MongoClient(MONGODB_URI)
+
 db = client["hexa_ai"]
 
-# Collection Name
 appointments_collection = db["appointments"]
+doctors_collection = db["doctors"]
 
 
 def init_db():
@@ -17,4 +22,4 @@ def init_db():
 
 
 def get_db():
-    return appointments_collection
+    return db

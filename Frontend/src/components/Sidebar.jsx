@@ -37,6 +37,11 @@ export default function Sidebar() {
       path: "/appointments",
       icon: <CalendarDays size={20} />,
     },
+     {
+      name: "Doctors Info",
+      path: "/doctors",
+      icon: <CalendarDays size={20} />,
+    },
   ];
 
   return (

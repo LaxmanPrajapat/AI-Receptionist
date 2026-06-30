@@ -4,6 +4,8 @@ import StatCard from "../components/StatCare";
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import axios from "axios";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+console.log(BACKEND_URL)
 import {
   Users,
   Calendar,
@@ -56,7 +58,7 @@ const [loading, setLoading] = useState(true);
 const fetchDashboard = async () => {
   try {
     const res = await axios.get(
-      "http://127.0.0.1:4444/dashboard"
+      `${BACKEND_URL}/dashboard`
     );
 
     setDashboard(res.data);
@@ -103,11 +105,16 @@ useEffect(() => {
       />
     </Link>
 
-          <StatCard
-            title="Doctors"
-            value="28"
-            icon={<UserCheck />}
-          />
+        <Link
+  to="/doctors"
+  style={{ textDecoration: "none", color: "inherit" }}
+>
+  <StatCard
+    title="Doctors"
+    value={loading ? "..." : dashboard.total_doctors}
+    icon={<UserCheck />}
+  />
+</Link>
 
           <StatCard
             title="Cancelled"

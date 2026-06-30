@@ -1,8 +1,13 @@
 # Step1: Import Database objects
 from fastapi.middleware.cors import CORSMiddleware
-from database import init_db, appointments_collection
+from bson import ObjectId
+from database import (
+    init_db,
+    appointments_collection,
+    doctors_collection,
+)
 from fastapi import FastAPI, HTTPException
-from fastapi import APIRouter
+
 
 
 init_db()
@@ -37,6 +42,17 @@ class ListAppointmentRequest(BaseModel):
     date: dt.date
 
 
+class Doctor(BaseModel):
+    name: str
+    department: str
+    qualification: str
+    experience:int
+    phone: str
+    email: str
+    room: str
+    startTime: str
+    endTime: str
+    status: str
 
 
 app = FastAPI()
@@ -166,8 +182,7 @@ async def get_dashboard():
         if appointment.get("canceled", False)
     )
 
-    total_doctors = 0   # Replace later with doctors collection
-
+    total_doctors = doctors_collection.count_documents({})
     return {
         "total_patients": total_patients,
         "total_appointments": total_appointments,
@@ -181,6 +196,76 @@ async def get_dashboard():
         "today_appointments": [],
 
         "recent_activity": []
+    }
+
+@app.post("/doctors")
+def add_doctor(doctor: Doctor):
+    print(Doctor)
+    doctor_data = doctor.model_dump()
+    print(doctor_data)
+
+    result = doctors_collection.insert_one(doctor_data)
+
+    return {
+    "_id": str(result.inserted_id),
+    "message": "Doctor Added"
+    }
+
+@app.get("/doctors")
+def get_doctors():
+
+    doctors = []
+
+    for doctor in doctors_collection.find():
+
+        doctor["_id"] = str(doctor["_id"])
+
+        doctors.append(doctor)
+
+    return doctors
+
+@app.put("/doctors/{doctor_id}")
+def update_doctor(
+    doctor_id: str,
+    doctor: Doctor
+):
+
+    result= doctors_collection.update_one(
+        {
+            "_id": ObjectId(doctor_id)
+        },
+        {
+            "$set": doctor.model_dump()
+        }
+    )
+    if result.matched_count == 0:
+     raise HTTPException(
+        status_code=404,
+        detail="Doctor not found"
+    ) 
+    
+
+    return {
+        "message": "Doctor Updated"
+    }
+
+@app.delete("/doctors/{doctor_id}")
+def delete_doctor(doctor_id: str):
+
+    result = doctors_collection.delete_one(
+        {
+            "_id": ObjectId(doctor_id)
+        }
+    )
+
+    if result.deleted_count == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Doctor not found"
+        )
+
+    return {
+        "message": "Doctor Deleted Successfully"
     }
 import uvicorn
 if __name__ == "__main__":

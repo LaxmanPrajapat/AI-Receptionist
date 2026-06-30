@@ -33,6 +33,9 @@ import { CalendarIcon, Search } from "lucide-react";
 import { format } from "date-fns";
 
 import { toast } from "sonner";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+
 
 export default function Appointments() {
   const [date, setDate] = useState(new Date());
@@ -46,7 +49,7 @@ export default function Appointments() {
       setLoading(true);
 
       const res = await axios.post(
-        "http://127.0.0.1:4444/list_appointments/",
+        `${BACKEND_URL}/list_appointments/`,
         {
           date: format(date, "yyyy-MM-dd"),
         }

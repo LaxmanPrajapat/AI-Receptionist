@@ -7,7 +7,7 @@ import PatientDetails from "./pages/PatientDetails";
 import Appointments from "./pages/Appointments";
 
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import Doctors from "./pages/Doctors";
 function App() {
   return (
     <BrowserRouter>
@@ -51,6 +51,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+    path="/doctors"
+    element={
+        <ProtectedRoute>
+            <Doctors />
+        </ProtectedRoute>
+    }
+/>
 
       </Routes>
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import DashboardLayout from "../layouts/DashboardLayout";
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import {
@@ -30,7 +30,7 @@ export default function Patients() {
   const fetchPatients = async () => {
     try {
       const res = await axios.get(
-        "http://127.0.0.1:4444/patients/"
+        `${BACKEND_URL}/patients/`
       );
 
       setPatients(res.data);
